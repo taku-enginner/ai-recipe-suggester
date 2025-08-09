@@ -27,12 +27,38 @@ services:
       - .:/app
       # GemをPC側にキャッシュし、ビルドを高速化する
       - bundle_data:/usr/local/bundle:cached
+    environment:
+      REDIS_URL: redis://redis:6379/0
     ports:
       # PCの3000番ポートをコンテナの3000番ポートに接続
       - "3000:3000"
     # dbサービスが起動してからappサービスを起動する
     depends_on:
       - db
+      - redis
+
+  # Redis
+  redis:
+    image: redis:latest
+    container_name: my_app_redis
+    ports:
+      - "6379:6379"
+
+  # sidekiq
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bundle exec sidekiq
+    volumes:
+      - .:/app
+      - bundle_data:/usr/local/bundle:cached
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+
 
 # volumesで定義した名前付きボリュームをDockerに作成させる
 volumes:

@@ -1,0 +1,9 @@
+<%= turbo_stream.update "flash-messages" do %>
+  <div class="alert alert-info" role="alert">
+    <%= flash.now[:notice] %>
+  </div>
+<% end %>
+
+<%#<%= turbo_stream.update "recipe_form" do %>
+  <%#<%= render "form" %>
+<%#<% end %>
